@@ -27,17 +27,20 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req,res ) => {
-    try {
-      const foundCategory = await db.category.findOne({
-        where: { id: req.params.id },
-      });
-      await foundCategory.destroy();
-      res.redirect("/categories");
-    } catch (err) {
-      console.log(err);
+router.delete("/:id", async (req, res) => {
+    if (req.cookies.userId) {
+        try {
+            const foundCategory = await db.category.findOne({
+                where: { id: req.params.id },
+            });
+            await foundCategory.destroy();
+            res.redirect("/categories");
+        } catch (err) {
+            console.log(err);
+        }
+    } else {
+        res.redirect("/users/login");
     }
-  })
-  
+});
 
 module.exports = router;
