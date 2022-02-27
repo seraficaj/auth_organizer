@@ -1,0 +1,36 @@
+<h1><%= project.name %></h1>
+
+<a class="btn btn-primary" href="<%= project.githubLink %>" target="_blank">
+  <i class="fa fa-github" aria-hidden="true"></i>
+  Github Link
+</a>
+
+<a class="btn btn-primary" href="<%= project.deployLink %>" target="_blank">
+  <i class="fa fa-globe" aria-hidden="true"></i>
+  Deployed Link
+</a>
+
+<a class="btn btn-secondary" href="/projects/edit/<%= project.id %>" target="_blank">
+  Edit Project
+</a>
+
+<p><%= project.description %></p>
+
+<h2>Project Category</h2>
+  <% project.categories.forEach(element => { %>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title"><a href="/categories/<%= element.id %>"> 
+          <%= element.name %> </h3>
+        </a>
+      </div>
+    </div>
+  <% }) %>
+
+<hr />
+
+<a href="/">&larr; Back Home</a>
+
+<form action="/projects/<%=project.id%>?_method=DELETE" method="POST">
+  <input type="submit" class="btn btn-danger" value="Delete Project" />
+</form>

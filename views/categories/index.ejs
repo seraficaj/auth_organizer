@@ -1,0 +1,9 @@
+<h1>All Categories</h1>
+
+<% categories.forEach(element => { %>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title"><a href="/categories/<%=element.id%>"><%= element.name %> </a></h2>
+        </div>
+    </div>
+<% }) %>
