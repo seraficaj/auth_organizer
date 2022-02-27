@@ -60,8 +60,13 @@ router.post('/login', async (req, res)=>{
 })
 
 router.get('/profile', async (req,res) => {
-    const userProjects = await res.locals.user.getProjects();
-    res.render("users/myProfile", {user: res.locals.user, userProjects});
+    if (req.cookies.userId) {
+
+        const userProjects = await res.locals.user.getProjects();
+        res.render("users/myProfile", {user: res.locals.user, userProjects});
+    } else {
+        res.redirect("/users/login")
+    }
 })
 
 router.get('/logout', (req, res)=>{
