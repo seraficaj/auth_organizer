@@ -1,4 +1,6 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
+const cryptoJS = require("crypto-js");
 const ejsLayouts = require("express-ejs-layouts");
 const db = require("./models");
 const rowdy = require("rowdy-logger");
@@ -8,12 +10,35 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 rowdy.begin(app);
 
+// Middleware
 app.set("view engine", "ejs");
 app.use(require("morgan")("dev"));
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser()); // gives access to req.cookies
 app.use("/public", express.static("public"));
 app.use(ejsLayouts);
 app.use(methodOverride('_method'));
+
+// Custom Middleware for creating an accessible user variable in all routes
+// Custom Middleware
+app.use(async (req, res, next)=>{
+    if(req.cookies.userId){
+        // decrypting the incoming user id from the cookie
+        const decryptedId = cryptoJS.AES.decrypt(req.cookies.userId, process.env.SECRET)
+        // converting the decrypted id into a readable string
+        const decryptedIdString = decryptedId.toString(cryptoJS.enc.Utf8)
+        // querying the db for the user with that id
+        const user = await db.user.findByPk(decryptedIdString)
+        // assigning the found user to res.locals.user in the routes, and user in the ejs
+        res.locals.user = user
+    } else res.locals.user = null
+    next() // move on to next middleware
+})
+
+// Defined Routes first
+app.use("/users", require("./controllers/users"));
+app.use("/projects", require("./controllers/projects"));
+app.use("/categories", require("./controllers/categories"));
 
 app.get("/", (req, res) => {
     db.project
@@ -27,8 +52,6 @@ app.get("/", (req, res) => {
         });
 });
 
-app.use("/projects", require("./controllers/projects"));
-app.use("/categories", require("./controllers/categories"));
 
 
 app.get("*", (req, res) => {
