@@ -1,6 +1,6 @@
 {
   "development": {
-    "database": "project_organizer",
+    "database": "auth_organizer",
     "username": "root",
     "password": "password",
     "host": "127.0.0.1",
