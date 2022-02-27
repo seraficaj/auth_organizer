@@ -5,9 +5,10 @@ const bcrypt = require('bcrypt')
 const cryptojs = require('crypto-js')
 require('dotenv').config()
 
-router.get('/new', (req, res)=>{
-    res.render('users/new.ejs')
+router.get('/new', async (req, res)=>{
+    res.render('users/new.ejs');
 })
+
 
 router.post('/', async (req, res)=>{
     const [newUser, created] = await db.user.findOrCreate({
@@ -21,7 +22,7 @@ router.post('/', async (req, res)=>{
         const hashedPassword = bcrypt.hashSync(req.body.password, 10)
         newUser.password = hashedPassword
         await newUser.save()
-
+        
         // encrypt the user id via AES
         const encryptedUserId = cryptojs.AES.encrypt(newUser.id.toString(), process.env.SECRET)
         const encryptedUserIdString = encryptedUserId.toString()
@@ -38,28 +39,29 @@ router.get('/login', (req, res)=>{
 })
 
 router.post('/login', async (req, res)=>{
-   const user = await db.user.findOne({where: {email: req.body.email}})
-   if(!user) { // didn't find user in the database
-       console.log('user not found!')
-       res.render('users/login.ejs', {error: 'Invalid email/password'})
-   } else if(!bcrypt.compareSync(req.body.password, user.password)) { // found user but password was wrong 
-       console.log('Incorrect Password')
-       res.render('users/login.ejs', {error: 'Invalid email/password'})
-   } else {
-       console.log('logging in the user!')
-       // encrypt the user id via AES
-       const encryptedUserId = cryptojs.AES.encrypt(user.id.toString(), process.env.SECRET)
-       const encryptedUserIdString = encryptedUserId.toString()
-       console.log(encryptedUserIdString)
-       // store the encrypted id in the cookie of the res obj
-       res.cookie('userId', encryptedUserIdString)
-       // redirect back to home page
-       res.redirect('/')
-   }
+    const user = await db.user.findOne({where: {email: req.body.email}})
+    if(!user) { // didn't find user in the database
+        console.log('user not found!')
+        res.render('users/login.ejs', {error: 'Invalid email/password'})
+    } else if(!bcrypt.compareSync(req.body.password, user.password)) { // found user but password was wrong 
+        console.log('Incorrect Password')
+        res.render('users/login.ejs', {error: 'Invalid email/password'})
+    } else {
+        console.log('logging in the user!')
+        // encrypt the user id via AES
+        const encryptedUserId = cryptojs.AES.encrypt(user.id.toString(), process.env.SECRET)
+        const encryptedUserIdString = encryptedUserId.toString()
+        console.log(encryptedUserIdString)
+        // store the encrypted id in the cookie of the res obj
+        res.cookie('userId', encryptedUserIdString)
+        // redirect back to home page
+        res.redirect('/')
+    }
 })
 
-router.get('/profile', (req,res) => {
-    res.render("users/profile", {user: res.locals.user});
+router.get('/profile', async (req,res) => {
+    const userProjects = await res.locals.user.getProjects();
+    res.render("users/myProfile", {user: res.locals.user, userProjects});
 })
 
 router.get('/logout', (req, res)=>{
@@ -68,6 +70,15 @@ router.get('/logout', (req, res)=>{
     res.redirect('/')
 })
 
+router.get("/:id", async (req,res) => {
+    const user = await db.user.findOne({
+        where: {
+            id: req.params.id
+        }
+    })
+    const userProjects = await user.getProjects();
+    res.render("users/userProfile", {user, userProjects})
+});
 
 // export all these routes to the entry point file
 module.exports = router

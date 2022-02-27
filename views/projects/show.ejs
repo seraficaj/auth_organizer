@@ -1,5 +1,9 @@
 <h1><%= project.name %></h1>
-<h2>By: <%= user.email %> </h2>
+<h2>By: 
+  <a href="/users/<%= projectUser.id%>">
+    <%= projectUser.email %> 
+  </a>
+</h2>
 
 <a class="btn btn-primary" href="<%= project.githubLink %>" target="_blank">
   <i class="fa fa-github" aria-hidden="true"></i>
@@ -11,9 +15,11 @@
   Deployed Link
 </a>
 
-<a class="btn btn-secondary" href="/projects/edit/<%= project.id %>" target="_blank">
-  Edit Project
-</a>
+<% if (user && user.id === project.userId) { %> 
+  <a class="btn btn-secondary" href="/projects/edit/<%= project.id %>" target="_blank">
+    Edit Project
+  </a>
+<% } %> 
 
 <p><%= project.description %></p>
 
@@ -32,6 +38,8 @@
 
 <a href="/">&larr; Back Home</a>
 
+<% if (user && user.id === project.userId) { %> 
 <form action="/projects/<%=project.id%>?_method=DELETE" method="POST">
   <input type="submit" class="btn btn-danger" value="Delete Project" />
 </form>
+<% } %> 

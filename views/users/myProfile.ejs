@@ -1,0 +1,12 @@
+<h2>Hello <%= user.email %></h2>
+
+<h2>My Projects</h2>
+<% userProjects.forEach(element => { %>
+<div class="card">
+    <div class="card-body">
+        <h3 class="card-title">
+            <a href="/projects/<%= element.id %>"> <%= element.name %></a>
+        </h3>
+    </div>
+</div>
+<% }) %>

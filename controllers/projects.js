@@ -44,7 +44,7 @@ router.get("/:id", async (req, res) => {
             }
         })
         console.log(`foundProject`, foundProject.categories);
-        res.render("projects/show", {project: foundProject, user: projectUser});
+        res.render("projects/show", {project: foundProject, projectUser: projectUser});
     } catch (error) {
         res.status(400).render("main/404");
     }
