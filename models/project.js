@@ -11,25 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.project.belongsToMany(models.category, {
-        through: 'categoriesProjects',
-        onDelete: 'CASCADE'
-      })
+      models.project.belongsTo(models.user)
+      models.project.belongsToMany(models.category, { through: "categoriesProjects" })
     }
   }
   project.init({
-    githubLink: {
-      type: DataTypes.TEXT,
-      validate: { isUrl: true }
-    },
     name: DataTypes.STRING,
-    deployLink: {
-      type: DataTypes.TEXT,
-      validate: { isUrl: true }
-    },
-    description: {
-      type: DataTypes.TEXT
-    },
+    githubLink: DataTypes.STRING,
+    deployLink: DataTypes.STRING,
+    description: DataTypes.TEXT,
+    userId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'project',

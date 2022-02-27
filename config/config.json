@@ -1,8 +1,8 @@
 {
   "development": {
-    "database": "auth_organizer",
     "username": "root",
     "password": "password",
+    "database": "auth_organizer",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }

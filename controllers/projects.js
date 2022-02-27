@@ -11,6 +11,7 @@ router.post("/", async(req, res) => {
                 githubLink: req.body.githubLink,
                 deployLink: req.body.deployedLink,
                 description: req.body.description,
+                userId: req.body.userId
             }
         });
         const [category, categoryCreated] = await db.category.findOrCreate({
@@ -37,8 +38,13 @@ router.get("/:id", async (req, res) => {
             where: { id: req.params.id },
             include: [db.category]
         });
+        const projectUser = await db.user.findOne({
+            where: {
+                id: foundProject.userId
+            }
+        })
         console.log(`foundProject`, foundProject.categories);
-        res.render("projects/show", {project: foundProject});
+        res.render("projects/show", {project: foundProject, user: projectUser});
     } catch (error) {
         res.status(400).render("main/404");
     }

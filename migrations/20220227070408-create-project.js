@@ -8,14 +8,20 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      githubLink: {
-        type: Sequelize.TEXT
-      },
       name: {
         type: Sequelize.STRING
       },
+      githubLink: {
+        type: Sequelize.STRING
+      },
       deployLink: {
+        type: Sequelize.STRING
+      },
+      description: {
         type: Sequelize.TEXT
+      },
+      userId: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -24,10 +30,7 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      },
-      description: {
-        type: Sequelize.TEXT
-      },
+      }
     });
   },
   async down(queryInterface, Sequelize) {
