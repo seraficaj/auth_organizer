@@ -131,7 +131,30 @@ Now that the models have been created, you'll want to add the ability to create 
     -   `GET /categories` - show all the categories that exist
     -   `GET /categories/:id` - show a specific category and all the projects with that category
 
-#### Part 4: Styling
+#### Part 4: Incorporating User Model / Auth 
+- Create user model:
+```
+sequelize model:create --name user --attributes email:string,password:string
+```
+- Add on a userId column to projects table:
+    - undo all migrations `sequelize db:migrate:undo:all`
+    - update migration file where projects table is made:
+    - introduce user id column:
+        ```
+        userId: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+        }
+        ```
+    - save file, and then run `sequelize db:migrate`
+- add associations between user and project model
+- create views and controllers for user auth
+- create a new field for userID on project create view
+- save userId into project instance in project post route
+- Protected Routes
+    - wrap routes with check for cookies and redirect if not logged in
+    - don't render buttons/forms if not logged in
+#### Part 5: Styling
 
 When finished with the above, style the application appropriately with CSS. Try using a CSS framework you haven't used before, or a CSS syntax like [BEM](http://getbem.com/introduction/) or [OOCSS](https://www.smashingmagazine.com/2011/12/an-introduction-to-object-oriented-css-oocss/).
 
